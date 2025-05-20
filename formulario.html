@@ -8,12 +8,12 @@
     body {
       font-family: "Segoe UI", sans-serif;
       margin: 0;
-      background: url('backgroundVotaciones.jpg') no-repeat center center fixed;
+      background: url('fondo.jpg') no-repeat center center fixed;
       background-size: cover;
     }
 
     .container {
-      background-color: rgba(255, 248, 240, 0.95);
+      background-color: rgba(255, 248, 240, 0.95); /* crema claro con transparencia */
       max-width: 600px;
       margin: 60px auto;
       padding: 30px;
@@ -23,19 +23,14 @@
 
     h1 {
       text-align: center;
-      color: #5D4037;
+      color: #5D4037; /* café oscuro */
       margin-bottom: 10px;
     }
 
     h2 {
       text-align: center;
-      color: #795548;
+      color: #795548; /* café medio */
     }
-     h3 {
-      text-align: center;
-      color: #795548;
-    }
-
 
     label {
       font-weight: bold;
@@ -77,8 +72,7 @@
 
   <div class="container">
     <h1>Montesinos Sección Aitana</h1>
-    <h2>¿Está usted de acuerdo con las clases de zumba en el kisoko?</h2>
-    <h3>En domicilio, poner solo calle y numero, ejemplo Aitana 100, Algar 1, Leon 3, Gran Canaria 5, Lanzarote 50</h3>
+    <h2>¿Está usted de acuerdo con las clases de zumba?</h2>
 
     <form id="voteForm">
       <label for="domicilio">Domicilio (ej. Calle 123):</label>
@@ -101,24 +95,37 @@
   </div>
 
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzLLJauhvtiULHjLiMLm-wn4ny37EzA-qeLVR8I2LPFoOfhnXLUB-sZUD8WfESaD5XlPQ/exec';
-    const form = document.getElementById('voteForm');
-    const message = document.getElementById('message');
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzZTTUtGj7-l1H3x_iK496KcDR1Ng_4CY6hmoPeDyST6gWbzDGRoT-K8d8xSD8uNxgBJQ/exec';
+const form = document.getElementById('voteForm');
+const message = document.getElementById('message');
 
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const formData = new FormData(form);
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  message.innerText = "Enviando...";
 
-      fetch(scriptURL, { method: 'POST', body: formData })
-        .then(response => {
-          message.innerHTML = "✅ ¡Tu voto ha sido registrado!";
-          form.reset();
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          message.innerHTML = "❌ Ocurrió un error al enviar tu voto.";
-        });
+  const formData = new FormData(form);
+  
+  try {
+    const response = await fetch(scriptURL, {
+      method: 'POST',
+      body: formData
     });
+
+    const result = await response.json();
+
+    if (result.success) {
+      message.innerText = "✅ ¡Tu voto ha sido registrado!";
+      form.reset();
+    } else {
+      message.innerText = "⚠️ " + result.message;
+    }
+
+  } catch (error) {
+    console.error('Error:', error);
+    message.innerText = "❌ Ocurrió un error al enviar tu voto.";
+  }
+});
+
   </script>
 
 </body>
